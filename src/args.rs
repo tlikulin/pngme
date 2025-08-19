@@ -1,9 +1,9 @@
 use clap::{Args, Parser, Subcommand};
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 #[derive(Parser)]
 #[command(name = "PngMe")]
-#[command(version = "1.0.0")]
+#[command(version = env!("CARGO_PKG_VERSION"))]
 #[command(about = "Lets your encode and decode hidden messages in PNG files", long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
