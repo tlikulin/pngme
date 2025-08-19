@@ -109,7 +109,7 @@ pub fn print(print_args: PrintArgs) {
         }
     };
 
-    println!("File: `{}`", file_name);
+    println!("File: `{file_name}`");
     println!("-------------------------------");
     analyse_png(&png, filter);
 }
@@ -126,18 +126,16 @@ pub fn scan_dir(scan_dir_args: ScanDirArgs) {
         }
     };
 
-    for entry in dir_entries {
-        if let Ok(entry) = entry {
-            let file_path = entry.path();
-            let file_name = file_path.display().to_string();
-            let Some(png) = read_png_quiet(file_path) else {
-                continue;
-            };
+    for entry in dir_entries.flatten() {
+        let file_path = entry.path();
+        let file_name = file_path.display().to_string();
+        let Some(png) = read_png_quiet(file_path) else {
+            continue;
+        };
 
-            println!("File: `{file_name}`");
-            println!("-------------------------------");
-            analyse_png(&png, filter);
-        }
+        println!("File: `{file_name}`");
+        println!("-------------------------------");
+        analyse_png(&png, filter);
     }
 }
 
@@ -172,9 +170,8 @@ fn read_png(file_path: PathBuf) -> Option<Png> {
             std::process::exit(1);
         }
     };
-    let png = Png::try_from(&buffer[..]).ok();
 
-    png
+    Png::try_from(&buffer[..]).ok()
 }
 
 fn read_png_quiet(file_path: PathBuf) -> Option<Png> {
@@ -194,9 +191,7 @@ fn read_png_quiet(file_path: PathBuf) -> Option<Png> {
 
     // read as bytes and build a struct
     let buffer = fs::read(file_path).ok()?;
-    let png = Png::try_from(&buffer[..]).ok();
-
-    png
+    Png::try_from(&buffer[..]).ok()
 }
 
 fn analyse_png(png: &Png, filter: bool) {

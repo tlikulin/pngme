@@ -80,7 +80,7 @@ impl TryFrom<&[u8]> for Png {
         if png_length < 8 {
             return Err(PngError::TooShort);
         }
-        if &value[..8] != &Png::STANDARD_HEADER {
+        if value[..8] != Png::STANDARD_HEADER {
             return Err(PngError::MissingSignature);
         }
 
@@ -276,7 +276,7 @@ mod tests {
 
         let png: Png = TryFrom::try_from(bytes.as_ref()).unwrap();
 
-        let _png_string = format!("{}", png);
+        let _png_string = format!("{png}");
     }
 
     // This is the raw bytes for a shrunken version of the `dice.png` image on Wikipedia

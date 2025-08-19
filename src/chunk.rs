@@ -53,7 +53,7 @@ impl Chunk {
     }
 
     pub fn data_as_string(&self) -> Result<String, FromUtf8Error> {
-        Ok(String::from_utf8(self.data.clone())?)
+        String::from_utf8(self.data.clone())
     }
 
     pub fn as_bytes(&self) -> Vec<u8> {
@@ -242,7 +242,7 @@ mod tests {
 
         let chunk: Chunk = TryFrom::try_from(chunk_data.as_ref()).unwrap();
 
-        let _chunk_string = format!("{}", chunk);
+        let _chunk_string = format!("{chunk}");
     }
 
     #[test]
