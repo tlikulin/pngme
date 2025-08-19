@@ -14,12 +14,9 @@ pub fn encode(encode_args: EncodeArgs) {
     let data = message.as_bytes().to_owned();
     let output_file = output_file.unwrap_or(file_path.clone());
 
-    let mut png = match read_png(file_path) {
-        Some(png) => png,
-        None => {
-            println!("Not valid PNG format");
-            std::process::exit(1);
-        }
+    let Some(mut png) = read_png(file_path) else {
+        println!("Not valid PNG format");
+        std::process::exit(1);
     };
 
     let chunk_type = match chunk_name.parse::<ChunkType>() {
@@ -48,12 +45,9 @@ pub fn decode(decode_args: DecodeArgs) {
     } = decode_args;
     let file_name = file_path.display().to_string();
 
-    let png = match read_png(file_path) {
-        Some(png) => png,
-        None => {
-            println!("Not valid PNG format");
-            std::process::exit(1);
-        }
+    let Some(png) = read_png(file_path) else {
+        println!("Not valid PNG format");
+        std::process::exit(1);
     };
 
     let output = match png.chunk_by_type(&chunk_type) {
@@ -72,20 +66,14 @@ pub fn remove(remove_args: RemoveArgs) {
     } = remove_args;
     let file_name = file_path.display().to_string();
 
-    let mut png = match read_png(file_path.clone()) {
-        Some(png) => png,
-        None => {
-            println!("Not valid PNG format");
-            std::process::exit(1);
-        }
+    let Some(mut png) = read_png(file_path.clone()) else {
+        println!("Not valid PNG format");
+        std::process::exit(1);
     };
 
-    let chunk = match png.remove_first_chunk(&chunk_type) {
-        Ok(ch) => ch,
-        Err(_) => {
-            println!("Chunk {chunk_type} not found in `{file_name}`");
-            std::process::exit(1);
-        }
+    let Ok(chunk) = png.remove_first_chunk(&chunk_type) else {
+        println!("Chunk {chunk_type} not found in `{file_name}`");
+        std::process::exit(1);
     };
 
     match fs::write(file_path, png.as_bytes()) {
@@ -101,12 +89,9 @@ pub fn print(print_args: PrintArgs) {
     let PrintArgs { filter, file_path } = print_args;
     let file_name = file_path.display().to_string();
 
-    let png = match read_png(file_path) {
-        Some(png) => png,
-        None => {
-            println!("Not valid PNG format");
-            std::process::exit(1);
-        }
+    let Some(png) = read_png(file_path.clone()) else {
+        println!("Not valid PNG format");
+        std::process::exit(1);
     };
 
     println!("File: `{file_name}`");

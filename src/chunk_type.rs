@@ -53,11 +53,11 @@ impl FromStr for ChunkType {
     type Err = ChunkTypeError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() != 4 {
-            Err(ChunkTypeError::InvalidLen)
-        } else {
+        if s.len() == 4 {
             let bytes: Vec<u8> = s.bytes().collect();
             TryFrom::try_from([bytes[0], bytes[1], bytes[2], bytes[3]])
+        } else {
+            Err(ChunkTypeError::InvalidLen)
         }
     }
 }

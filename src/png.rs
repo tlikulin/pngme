@@ -29,18 +29,16 @@ impl Png {
     }
 
     pub fn remove_first_chunk(&mut self, chunk_type: &str) -> Result<Chunk, PngError> {
-        let chunk_type = match ChunkType::from_str(chunk_type) {
-            Ok(ch) => ch,
-            Err(_) => return Err(PngError::InvalidChunkType),
+        let Ok(chunk_type) = ChunkType::from_str(chunk_type) else {
+            return Err(PngError::InvalidChunkType);
         };
 
-        let ind = match self
+        let Some(ind) = self
             .chunks
             .iter()
             .position(|chunk| chunk.chunk_type() == &chunk_type)
-        {
-            Some(ind) => ind,
-            None => return Err(PngError::ChunkTypeNotFound),
+        else {
+            return Err(PngError::ChunkTypeNotFound);
         };
 
         Ok(self.chunks.remove(ind))
@@ -65,7 +63,7 @@ impl Png {
 
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut bytes = Vec::from(Png::STANDARD_HEADER);
-        for chunk in self.chunks.iter() {
+        for chunk in &self.chunks {
             bytes.append(&mut chunk.as_bytes());
         }
         bytes
@@ -100,9 +98,8 @@ impl TryFrom<&[u8]> for Png {
                 return Err(PngError::InvalidChunkLength);
             }
 
-            let chunk = match Chunk::try_from(&value[ptr..ptr + chunk_length]) {
-                Ok(chunk) => chunk,
-                Err(_) => return Err(PngError::CouldNotConstructChunk),
+            let Ok(chunk) = Chunk::try_from(&value[ptr..ptr + chunk_length]) else {
+                return Err(PngError::CouldNotConstructChunk);
             };
             chunks.push(chunk);
 

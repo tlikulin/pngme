@@ -7,7 +7,7 @@ mod png;
 
 use clap::Parser;
 
-use args::*;
+use args::{Cli, PngMeArgs};
 
 fn main() {
     let cli = Cli::parse();
